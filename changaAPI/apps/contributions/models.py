@@ -5,7 +5,7 @@ class Contribution(models.Model):
 
     transaction_type = models.CharField(default='', max_length=255)
 
-    transaction_id = models.CharField(max_length=255)
+    transaction_id = models.CharField(max_length=255, unique=True)
 
     amount = models.DecimalField(max_digits=10, decimal_places=2)
 
