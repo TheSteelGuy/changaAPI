@@ -24,10 +24,10 @@ class RegisterUserView(generics.CreateAPIView):
     renderer_classes = (UserJSONRenderer,)
 
     def post(self, request, **kwargs):
-        user = request.data.get('user', {})
-        username = user.get("username", "")
-        password = user.get("password", "")
-        email = user.get("email", "")
+        username = request.data.get("email", "")
+        password = request.data.get("password", "")
+        email = request.data.get("email", "")
+        user = {'username': username, 'password': password, 'email': email}
 
         serializer = self.serializer_class(data=user)
         serializer.is_valid(raise_exception=True)
@@ -60,10 +60,11 @@ class LoginView(generics.CreateAPIView):
 
     def post(self, request, *args, **kwargs):
 
-        user_data = request.data.get('user')
-        username = user_data.get("username", "")
-        password = user_data.get("password", "")
-        user = authenticate(request, username=username, password=password)
+        username = request.data.get("email", "")
+        password = request.data.get("password", "")
+        email = request.data.get("email", "")
+
+        user = authenticate(request, email=email, password=password)
         if user is not None:
             # login saves the user’s ID in the session,
             # using Django’s session framework.
