@@ -26,7 +26,7 @@ SECRET_KEY = '%mtf-4798^maxcb7jv_4y_6$2_i_k^m1v5x_359czubel47k#k'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'changaAPI.apps.authentication',
+    'changaAPI.apps.contributions',
 ]
 
 REST_FRAMEWORK = {

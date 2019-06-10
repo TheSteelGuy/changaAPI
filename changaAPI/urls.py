@@ -25,4 +25,5 @@ urlpatterns = [
              'authentication'),
 
             namespace='authentication',)),
+    path('api/', include(('changaAPI.apps.callbacks.urls', 'callbacks'), namespace='callbacks')),
 ]
