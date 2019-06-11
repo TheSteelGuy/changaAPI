@@ -16,16 +16,16 @@ class ContributionSerializer(serializers.ModelSerializer):
 
     bill_ref_number = serializers.CharField( max_length=255)
 
-    account_balance = models.CharField(max_length=255)
+    account_balance = serializers.CharField(max_length=255)
 
     msisdn = serializers.CharField(max_length=255)
 
     first_name = serializers.CharField(max_length=255)
     middle_name = serializers.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
+    last_name = serializers.CharField(max_length=255)
 
     # A timestamp representing when this object was created.
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = serializers.DateTimeField()
 
     class Meta:
         model = Contribution

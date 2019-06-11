@@ -34,9 +34,10 @@ class LipaNaMpesaView(generics.CreateAPIView):
         )
 
         contribution_obj.save()
-        # implimennt server sent to update UI
 
-        print(contribution_obj.transaction_id, contribution_obj.account_balance)
+        # impliment server sent to update UI
+
+        print(request.data)
 
         return Response({'message': request.data}, status=status.HTTP_200_OK)
 
