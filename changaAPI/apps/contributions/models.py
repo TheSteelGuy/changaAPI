@@ -1,4 +1,5 @@
 from django.db import models
+from ..authentication.models import User
 
 
 class Contribution(models.Model):
@@ -20,6 +21,8 @@ class Contribution(models.Model):
     first_name = models.CharField(max_length=255)
     middle_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
+
+    members = models.ManyToManyField(User, through='Membership')
 
     # A timestamp representing when this object was created.
     created_at = models.DateTimeField(auto_now_add=True)
