@@ -10,6 +10,8 @@ from django.contrib.auth.models import (
 from django.contrib.auth.tokens import default_token_generator
 from django.db import models
 
+from ..contributions.models import Contribution
+
 
 class UserManager(BaseUserManager):
     """
@@ -20,15 +22,15 @@ class UserManager(BaseUserManager):
     to create `User` objects.
     """
 
-    def create_user(self, username, email, password=None):
+    def create_user(self, username, phone_number, password=None):
         """Create and return a `User` with an email, username and password."""
         if username is None:
             raise TypeError('Users must have a username.')
 
-        if email is None:
-            raise TypeError('Users must have an email address.')
+        if phone_number is None:
+            raise TypeError('Users must have an phone number .')
 
-        user = self.model(username=username, email=self.normalize_email(email))
+        user = self.model(username=username, phone_number=phone_number)
         user.set_password(password)
         user.save()
 
@@ -60,31 +62,29 @@ class User(AbstractBaseUser, PermissionsMixin):
     # database to improve lookup performance.
     username = models.CharField(db_index=True, max_length=255, unique=True)
 
-    # We also need a way to contact the user and a way for the user to identify
-    # themselves when logging in. Since we need an email address for contacting
-    # the user anyways, we will also use the email for logging in because it is
-    # the most common form of login credential at the time of writing.
-    email = models.EmailField(db_index=True, unique=True)
+    phone_number = models.PositiveIntegerField(db_index=True, unique=True)
+
     is_active = models.BooleanField(default=True)
 
     # The `is_staff` flag is expected by Django to determine who can and cannot
     # log into the Django admin site. For most users, this flag will always be
     # false.
-    is_staff = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
 
     # A timestamp representing when this object was created.
     created_at = models.DateTimeField(auto_now_add=True)
 
-    # A timestamp reprensenting when this object was last updated.
+    # A timestamp representing when this object was last updated.
     updated_at = models.DateTimeField(auto_now=True)
 
+    contributions = models.ManyToManyField(Contribution)
 
     # More fields required by Django when specifying a custom user model.
 
     # The `USERNAME_FIELD` property tells us which field we will use to log in.
     # In this case, we want that to be the email field.
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    USERNAME_FIELD = 'phone_number'
+    REQUIRED_FIELDS = ['password']
 
     objects = UserManager()
 
@@ -93,4 +93,4 @@ class User(AbstractBaseUser, PermissionsMixin):
         Returns a string representation of this `User`.
         This string is used when a `User` is printed in the console.
         """
-        return self.email
+        return str(self.phone_number)
