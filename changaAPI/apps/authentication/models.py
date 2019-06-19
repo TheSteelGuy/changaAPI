@@ -36,16 +36,15 @@ class UserManager(BaseUserManager):
 
         return user
 
-    def create_superuser(self, username, email, password):
+    def create_superuser(self, phone_number, password):
         """
-        Create and return a `User` with superuser powers.
-        Superuser powers means that this use is an admin that can do anything
-        they want.
+        Create and return a `User` with superuser .
         """
         if password is None:
             raise TypeError('Superusers must have a password.')
 
-        user = self.create_user(username, email, password)
+        user = self.model(phone_number=phone_number, password=password, username=phone_number)
+        user.set_password(password)
         user.is_superuser = True
         user.is_staff = True
         user.save()
@@ -62,7 +61,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     # database to improve lookup performance.
     username = models.CharField(db_index=True, max_length=255, unique=True)
 
-    phone_number = models.PositiveIntegerField(db_index=True, unique=True)
+    phone_number = models.PositiveIntegerField(db_index=True, unique=True)# msisdn
 
     is_active = models.BooleanField(default=True)
 

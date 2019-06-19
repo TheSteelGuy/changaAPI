@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'changaAPI.apps.authentication',
     'changaAPI.apps.contributions',
+    'changaAPI.apps.chamaa',
 ]
 
 REST_FRAMEWORK = {

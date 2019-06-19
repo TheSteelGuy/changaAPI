@@ -1,5 +1,8 @@
 from rest_framework.response import Response
 from rest_framework import generics, permissions, status
+from ..authentication.models import User
+
+from ..chamaa.models import Chamaa
 
 #models
 
@@ -12,6 +15,15 @@ class LipaNaMpesaView(generics.CreateAPIView):
 
     def post(self, request, **kwargs):
         print('....................................................................≥≥...................')
+
+        chamaa_obj = Chamaa.objects.filter(account_number=request.data.get('BusinessShortCode')).first()
+
+        if not chamaa_obj:
+
+            chamaa_obj = Chamaa.objects.create(
+                title='chamaa'+request.data.get('BusinessShortCode'),
+                account_number=request.data.get('BusinessShortCode')
+            )
 
         contribution_obj = Contribution(
             transaction_type=request.data.get('TransactionType'),
@@ -30,14 +42,26 @@ class LipaNaMpesaView(generics.CreateAPIView):
 
             first_name=request.data.get('FirstName'),
             middle_name=request.data.get('MiddleName'),
-            last_name=request.data.get('LastName')
+            last_name=request.data.get('LastName'),
+            chamaa=chamaa_obj
         )
 
         contribution_obj.save()
+        phone = request.data.get('MSISDN')
+        phone_number = phone if len(phone) <= 10 else phone[3:]
+        user = User.objects.filter(phone_number__contains=phone_number).first()
+        if user:
+            user.contributions.add(contribution_obj)
+        elif not user:
+            user = User.objects.create_user(
+                phone_number=phone_number,
+                username='user'+phone_number,
+                password=phone_number
+            )
 
-        # impliment server sent to update UI
+            user.contributions.add(contribution_obj)
 
-        print(request.data)
+        print(contribution_obj)
 
         return Response({'message': request.data}, status=status.HTTP_200_OK)
 
@@ -47,8 +71,5 @@ class MpesaValidationUrl(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, **kwargs):
-        print('wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwnnnwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww')
-
-        print(request.data)
 
         return Response('completed', status=status.HTTP_200_OK)
