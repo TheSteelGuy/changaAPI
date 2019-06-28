@@ -4,7 +4,6 @@ from ..authentication.models import User
 
 from ..chamaa.models import Chamaa
 
-#models
 
 from ..contributions.models import Contribution
 
@@ -15,6 +14,8 @@ class LipaNaMpesaView(generics.CreateAPIView):
 
     def post(self, request, **kwargs):
         print('....................................................................≥≥...................')
+        phone = request.data.get('MSISDN')
+        phone_number = phone if len(phone) <= 10 else phone[3:]
 
         chamaa_obj = Chamaa.objects.filter(account_number=request.data.get('BusinessShortCode')).first()
 
@@ -22,7 +23,8 @@ class LipaNaMpesaView(generics.CreateAPIView):
 
             chamaa_obj = Chamaa.objects.create(
                 title='chamaa'+request.data.get('BusinessShortCode'),
-                account_number=request.data.get('BusinessShortCode')
+                account_number=request.data.get('BusinessShortCode'),
+                phone_number=phone_number
             )
 
         contribution_obj = Contribution(
@@ -47,8 +49,7 @@ class LipaNaMpesaView(generics.CreateAPIView):
         )
 
         contribution_obj.save()
-        phone = request.data.get('MSISDN')
-        phone_number = phone if len(phone) <= 10 else phone[3:]
+
         user = User.objects.filter(phone_number__contains=phone_number).first()
         if user:
             user.contributions.add(contribution_obj)
@@ -71,5 +72,7 @@ class MpesaValidationUrl(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, **kwargs):
+        print('>>>>>>>>>>>>>>'*15)
+        print(request.data)
 
-        return Response('completed', status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK)
