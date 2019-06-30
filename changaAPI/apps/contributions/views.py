@@ -18,12 +18,8 @@ class UserContributionByAccountNumberView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         account_number = self.request.query_params.get('account-number', None)
-        import pdb;pdb.set_trace()
-        print(account_number)
-
-        chamaa = Chamaa.objects.filter(account_number=account_number, ).first()
-
-        queryset = Contribution.objects.filter(chamaa=chamaa).all()
+     
+        queryset= Chamaa.objects.filter(account_number=account_number).first().contributions.all()
 
         return queryset
 

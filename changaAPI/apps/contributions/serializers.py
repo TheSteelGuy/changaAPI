@@ -23,6 +23,7 @@ class ContributionSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(max_length=255)
     middle_name = serializers.CharField(max_length=255)
     last_name = serializers.CharField(max_length=255)
+    required_amount = serializers.DecimalField(max_digits=10, decimal_places=2)
 
     # A timestamp representing when this object was created.
     created_at = serializers.DateTimeField()
@@ -32,4 +33,4 @@ class ContributionSerializer(serializers.ModelSerializer):
         # List all of the fields that could possibly be included in a request
         # or response, including fields specified explicitly above.
         fields = ['transaction_type', 'transaction_id', 'amount', 'business_shortcode', 'bill_ref_number',
-                  'account_balance', 'msisdn', 'first_name', 'middle_name', 'last_name', 'created_at']
+                  'account_balance', 'msisdn', 'first_name', 'middle_name', 'last_name','required_amount', 'created_at']

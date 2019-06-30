@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework import generics, permissions, status
-from .models import Chamaa
+from ..authentication.models import User
 
 from .serializers import ChamaaSerializer
 
@@ -13,5 +13,5 @@ class UserChamaaView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         
-        queryset = Chamaa.objects.filter(phone_number__contains=user.phone_number).all()
+        queryset = User.objects.filter(phone_number__contains=user.phone_number).first().chamaas.all()
         return queryset

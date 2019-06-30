@@ -20,12 +20,11 @@ class LipaNaMpesaView(generics.CreateAPIView):
         chamaa_obj = Chamaa.objects.filter(account_number=request.data.get('BusinessShortCode')).first()
 
         if not chamaa_obj:
-
             chamaa_obj = Chamaa.objects.create(
                 title='chamaa'+request.data.get('BusinessShortCode'),
                 account_number=request.data.get('BusinessShortCode'),
-                phone_number=phone_number
             )
+  
 
         contribution_obj = Contribution(
             transaction_type=request.data.get('TransactionType'),
@@ -45,22 +44,26 @@ class LipaNaMpesaView(generics.CreateAPIView):
             first_name=request.data.get('FirstName'),
             middle_name=request.data.get('MiddleName'),
             last_name=request.data.get('LastName'),
-            chamaa=chamaa_obj
+            target = chamaa_obj.required_amount
         )
 
         contribution_obj.save()
 
         user = User.objects.filter(phone_number__contains=phone_number).first()
-        if user:
-            user.contributions.add(contribution_obj)
-        elif not user:
+
+        if not user:
             user = User.objects.create_user(
                 phone_number=phone_number,
                 username='user'+phone_number,
                 password=phone_number
             )
 
-            user.contributions.add(contribution_obj)
+        user.contributions.add(contribution_obj)
+
+
+        chamaa_obj.contributions.add(contribution_obj)
+        user.chamaas.add(chamaa_obj)
+
 
         print(contribution_obj)
 

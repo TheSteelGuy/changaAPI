@@ -11,6 +11,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.db import models
 
 from ..contributions.models import Contribution
+from ..chamaa.models import Chamaa
 
 
 class UserManager(BaseUserManager):
@@ -77,6 +78,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     updated_at = models.DateTimeField(auto_now=True)
 
     contributions = models.ManyToManyField(Contribution)
+
+    chamaas = models.ManyToManyField(Chamaa)
 
     # More fields required by Django when specifying a custom user model.
 

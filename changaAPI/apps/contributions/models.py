@@ -1,5 +1,5 @@
 from django.db import models
-from ..chamaa.models import Chamaa
+from ..constants.models import MAX_DECIMAL_POINTS
 
 
 class Contribution(models.Model):
@@ -8,7 +8,7 @@ class Contribution(models.Model):
 
     transaction_id = models.CharField(max_length=255, unique=True)
 
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    amount = models.DecimalField(max_digits=MAX_DECIMAL_POINTS, decimal_places=2)
 
     business_shortcode = models.CharField(max_length=255, default='0')
 
@@ -23,8 +23,8 @@ class Contribution(models.Model):
     middle_name = models.CharField(max_length=255)
 
     last_name = models.CharField(max_length=255)
-
-    chamaa = models.ForeignKey(Chamaa, on_delete=models.CASCADE, default='')
+    
+    required_amount = models.DecimalField(max_digits=MAX_DECIMAL_POINTS, decimal_places=2, default=0.00)
 
     # A timestamp representing when this object was created.
     created_at = models.DateTimeField(auto_now_add=True)
