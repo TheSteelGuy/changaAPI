@@ -4,11 +4,11 @@ from datetime import datetime
 import os
 
 
-def form_password(shortcode):
+def construct_password(shortcode):
     try:
         now = datetime.now()
         timestamp=now.strftime("%Y%m%d%H%M%S")
-        shortcode = '174379'
+
         passkey = os.environ['PASSKEY']
         string = f"{shortcode+passkey+timestamp}"
         encoded = base64.b64encode(string.encode())
