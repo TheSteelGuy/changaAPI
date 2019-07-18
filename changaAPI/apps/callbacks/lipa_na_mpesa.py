@@ -44,7 +44,7 @@ class LipaNaMpesaView(generics.CreateAPIView):
             first_name=request.data.get('FirstName'),
             middle_name=request.data.get('MiddleName'),
             last_name=request.data.get('LastName'),
-            target = chamaa_obj.required_amount
+            required_amount = chamaa_obj.required_amount
         )
 
         contribution_obj.save()

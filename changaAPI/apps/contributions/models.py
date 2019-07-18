@@ -1,3 +1,5 @@
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 from django.db import models
 from ..constants.models import MAX_DECIMAL_POINTS
 
@@ -26,6 +28,8 @@ class Contribution(models.Model):
     
     required_amount = models.DecimalField(max_digits=MAX_DECIMAL_POINTS, decimal_places=2, default=0.00)
 
+    indicator_level = models.DecimalField(max_digits=3, decimal_places=2, default=0.00)
+
     # A timestamp representing when this object was created.
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -40,6 +44,16 @@ class Contribution(models.Model):
         This string is used when a `User` is printed in the console.
         """
         return 'Transaction Id: {} | Amount: {}'.format(self.transaction_id, self.amount)
+
+@receiver(pre_save, sender=Contribution)
+def add_context_contribution(instance, sender,*args, **kwargs):
+    if instance.required_amount > 0:
+        instance.indicator_value = round(
+            (instance.amount/instance.required_amount) * 100, 2)
+    instance.indicator_value = 1.00
+    
+        
+        
 
 
 
