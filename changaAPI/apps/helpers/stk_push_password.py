@@ -1,4 +1,3 @@
-import requests as r
 import base64
 from datetime import datetime
 import os
@@ -15,8 +14,5 @@ def construct_password(shortcode):
     except Exception as e:
         raise e
         # send an email or alert those in charge of the app
-    return encoded.decode()
+    return encoded.decode(), timestamp
 
-# "BusinessShortCode": "174379",
-# "Password": "MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMTkwNzE4MTY1MDMz",
-# "Timestamp": "20190718165033",

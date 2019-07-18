@@ -24,8 +24,10 @@ def generate_auth():
         url, headers={'Authorization': credentials},
         params=PARAMS
         )
+        print(res.json()['access_token'])
         return res.json()['access_token']
     
     except Exception as e:
         #log this error
         raise e
+print(generate_auth())

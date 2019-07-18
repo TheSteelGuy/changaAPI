@@ -1,3 +1,4 @@
+import os
 from rest_framework import generics, permissions, status
 
 from rest_framework.response import Response
@@ -7,6 +8,13 @@ from .serializers import ContributionSerializer
 from .models import Contribution
 from ..authentication.models import User
 from ..chamaa.models import Chamaa
+
+from ..helpers.stk_push_password import construct_password
+from ..constants.views import (
+    TRANSACTIONTYPE, TRANSACTIONDESC, ACCOUNTREF,CONTRIBUTION_MESSAGE,
+    SERVER_ERROR
+    )
+from ..helpers.contribution_request import send_request
 
 
 class UserContributionByAccountNumberView(generics.ListAPIView):
@@ -49,6 +57,43 @@ class ContributionAllView(generics.ListAPIView):
     serializer_class = ContributionSerializer
 
     queryset = Contribution.objects.all()
+
+
+class MakeContribution(generics.CreateAPIView):
+    permission_classes = (permissions.AllowAny,)
+    queryset = Contribution.objects.all()
+    def post(self, request, **kwargs):
+        try:
+            bussiness_shortcode = request.data["BusinessShortCode"]
+            password, timestamp = construct_password(bussiness_shortcode)
+          
+            amount = request.data["Amount"]
+            phone_number = request.data["PhoneNumber"]
+            party_b = bussiness_shortcode 
+            party_a = phone_number
+
+            contribution_obj = dict(
+                BusinessShortCode=bussiness_shortcode,
+                Password=password,
+                Timestamp=timestamp,
+                TransactionType=TRANSACTIONTYPE,
+                Amount=amount,
+                PartyA=party_a,
+                PartyB=party_b,
+                PhoneNumber=phone_number,
+                CallBackURL=os.environ["CALLBACK_URL"],
+                AccountReference=ACCOUNTREF,
+                TransactionDesc=TRANSACTIONDESC.format(bussiness_shortcode)
+            )
+            res=send_request(contribution_obj)#send request
+            print(res)
+        
+            return Response({'message':CONTRIBUTION_MESSAGE.format(amount)},status=status.HTTP_200_OK)
+        except Exception as e:
+            #log error
+            print(e)
+            return Response({'message':SERVER_ERROR}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 
