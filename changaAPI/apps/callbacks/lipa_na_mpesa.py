@@ -79,3 +79,4 @@ class MpesaValidationUrl(generics.CreateAPIView):
         print(request.data)
 
         return Response(status=status.HTTP_200_OK)
+# {'Body': {'stkCallback': {'MerchantRequestID': '18430-5217758-1', 'CheckoutRequestID': 'ws_CO_DMZ_389317553_19072019104628016', 'ResultCode': 0, 'ResultDesc': 'The service request is processed successfully.', 'CallbackMetadata': {'Item': [{'Name': 'Amount', 'Value': 1.0}, {'Name': 'MpesaReceiptNumber', 'Value': 'NGJ6D6ZLDS'}, {'Name': 'Balance'}, {'Name': 'TransactionDate', 'Value': 20190719104640}, {'Name': 'PhoneNumber', 'Value': 254723135671}]}}}}

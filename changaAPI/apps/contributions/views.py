@@ -60,15 +60,16 @@ class ContributionAllView(generics.ListAPIView):
 
 
 class MakeContribution(generics.CreateAPIView):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
     queryset = Contribution.objects.all()
     def post(self, request, **kwargs):
+        user = self.request.user
         try:
             bussiness_shortcode = request.data["BusinessShortCode"]
             password, timestamp = construct_password(bussiness_shortcode)
           
             amount = request.data["Amount"]
-            phone_number = request.data["PhoneNumber"]
+            phone_number = '254' + str(self.request.user.phone_number)
             party_b = bussiness_shortcode 
             party_a = phone_number
 
@@ -86,7 +87,7 @@ class MakeContribution(generics.CreateAPIView):
                 TransactionDesc=TRANSACTIONDESC.format(bussiness_shortcode)
             )
             res=send_request(contribution_obj)#send request
-            print(res)
+            print(contribution_obj)
         
             return Response({'message':CONTRIBUTION_MESSAGE.format(amount)},status=status.HTTP_200_OK)
         except Exception as e:
