@@ -28,26 +28,26 @@ def add_context_to_contribution(instance, chamaa_obj, user, Contribution):
                 business_shortcode=instance.business_shortcode,
                 created_at__month=date.today().month
             ).first()
-            #required = 500
-            #contr_amount =100
-            #second_contr_amount=100
+
             if contribution:
                 instace_amount = float(instance.amount)
+                contribution.amount += Decimal(instace_amount)
                 contribution_amount = float(contribution.amount)
                 
-            
                 print('>>>>>>><<<<<<<<<<>>>>>>>><<>><>><',contribution_amount)
                 if float(contribution.required_amount) > contribution_amount:
                     
-                    contribution.outstanding_balance = Decimal(float(contribution.required_amount) - contribution_amount)
-                    contribution_amount += instace_amount
+                    contribution.outstanding_balance = Decimal(float(contribution.required_amount) - float(contribution_amount))
+                    
                     contribution.indicator_level = Decimal(round(
-                    (instace_amount/float(instance.required_amount)), 2))
-                    contribution.save()
+                    (contribution_amount/float(contribution.required_amount)), 2))
+                  
                 elif float(contribution.required_amount) < contribution_amount:
                     contribution.outstanding_balance = Decimal(float(contribution.required_amount) - contribution_amount)
                     contribution.indicator_level = 1.00
-                    contribution.save()
+               
+                contribution.account_balance = str(float(contribution.account_balance) + float(instance.amount))
+                contribution.save()
         
             # the first contribution of the month
             else:
