@@ -63,7 +63,6 @@ class MakeContribution(generics.CreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     queryset = Contribution.objects.all()
     def post(self, request, **kwargs):
-        user = self.request.user
         try:
             bussiness_shortcode = request.data["BusinessShortCode"]
             password, timestamp = construct_password(bussiness_shortcode)
@@ -91,8 +90,8 @@ class MakeContribution(generics.CreateAPIView):
         
             return Response({'message':CONTRIBUTION_MESSAGE.format(amount)},status=status.HTTP_200_OK)
         except Exception as e:
-            #log error
-            print(e)
+            # log error
+            # print(e)
             return Response({'message':SERVER_ERROR}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

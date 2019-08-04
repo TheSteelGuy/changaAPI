@@ -7,6 +7,8 @@ from ..chamaa.models import Chamaa
 
 from ..contributions.models import Contribution
 
+from ..helpers.contribution_request import add_context_to_contribution
+
 
 class LipaNaMpesaView(generics.CreateAPIView):
     """callback for mpesa response """
@@ -47,7 +49,7 @@ class LipaNaMpesaView(generics.CreateAPIView):
             required_amount = chamaa_obj.required_amount
         )
 
-        contribution_obj.save()
+        #contribution_obj.save()
 
         user = User.objects.filter(phone_number__contains=phone_number).first()
 
@@ -58,14 +60,17 @@ class LipaNaMpesaView(generics.CreateAPIView):
                 password=phone_number
             )
 
-        user.contributions.add(contribution_obj)
+        # calculations function
+        add_context_to_contribution(contribution_obj, chamaa_obj, user, Contribution)
+
+        # user.contributions.add(contribution_obj)
 
 
-        chamaa_obj.contributions.add(contribution_obj)
-        user.chamaas.add(chamaa_obj)
+        # chamaa_obj.contributions.add(contribution_obj)
+        # user.chamaas.add(chamaa_obj)
 
 
-        print(contribution_obj)
+        # print(contribution_obj)
 
         return Response({'message': request.data}, status=status.HTTP_200_OK)
 
