@@ -27,6 +27,8 @@ class ContributionSerializer(serializers.ModelSerializer):
 
     indicator_level = serializers.DecimalField(max_digits=3, decimal_places=2)
 
+    outstanding_balance = serializers.DecimalField(max_digits=10, decimal_places=2)
+
     # A timestamp representing when this object was created.
     created_at = serializers.DateTimeField()
     class Meta:
@@ -34,4 +36,4 @@ class ContributionSerializer(serializers.ModelSerializer):
         # List all of the fields that could possibly be included in a request
         # or response, including fields specified explicitly above.
         fields = ['transaction_type', 'transaction_id', 'amount', 'business_shortcode', 'bill_ref_number',
-                  'account_balance', 'msisdn', 'first_name', 'middle_name', 'last_name','required_amount', 'indicator_level', 'created_at']
+                  'account_balance', 'msisdn', 'first_name', 'middle_name', 'last_name','required_amount', 'indicator_level','outstanding_balance', 'created_at']
