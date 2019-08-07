@@ -1,0 +1,42 @@
+version: '2'
+services:
+
+    api:
+        build: ./api
+        volumes:
+        - ./api:/usr/src/app
+        depends_on:
+          - postgres
+        expose:
+          - "8000"
+        command: gunicorn changaAPI.wsgi -b 0.0.0.0:8000
+        env_file: api/.env
+
+
+    postgres:
+
+        build: ./postgres
+        restart: unless-stopped
+        expose:
+            - "5432"
+        environment:   # will be used by the init script
+            LC_ALL: C.UTF-8
+            POSTGRES_USER: changaUser
+            POSTGRES_PASSWORD: __chamaachanga@#123
+            POSTGRES_DB: chama_changaDB
+        volumes:
+            - pgdata:/var/lib/postgresql/data/  # persist container's db data to local pgdata/ (mounted)
+
+
+
+    nginx:
+        restart: always
+        build: ./nginx/
+        ports:
+          - "8000:80"
+        links:
+          - api
+
+volumes:
+  pgdata:
+
