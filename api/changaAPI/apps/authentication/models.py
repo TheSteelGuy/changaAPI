@@ -77,7 +77,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     # A timestamp representing when this object was last updated.
     updated_at = models.DateTimeField(auto_now=True)
 
-    contributions = models.ManyToManyField(Contribution)
+    contributions = models.ManyToManyField(Contribution, blank=True)
 
     chamaas = models.ManyToManyField(Chamaa)
 
