@@ -59,7 +59,6 @@ REST_FRAMEWORK = {
 }
 
 
-
 # JWT settings
 JWT_AUTH = {
     'JWT_ENCODE_HANDLER':
@@ -133,10 +132,10 @@ WSGI_APPLICATION = 'changaAPI.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'chama_changaDB',
+        'NAME': 'changa',
         'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': 'postgres',
+        'HOST': 'localhost',
         'PORT': os.getenv('DB_PORT')
     }
 }
@@ -177,5 +176,10 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
+
+# PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+# STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
+# docker-compose run api ./manage.py  collectstatic
+
 
 STATIC_URL = '/static/'

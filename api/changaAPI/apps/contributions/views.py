@@ -2,6 +2,8 @@ import os
 from rest_framework import generics, permissions, status
 
 from rest_framework.response import Response
+import uuid
+from datetime import date
 
 
 from .serializers import ContributionSerializer
@@ -62,17 +64,18 @@ class ContributionAllView(generics.ListAPIView):
 class MakeContribution(generics.CreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     queryset = Contribution.objects.all()
+
     def post(self, request, **kwargs):
         try:
-            bussiness_shortcode = request.data["BusinessShortCode"]
+            bussiness_shortcode = '174379' # request.data["BusinessShortCode"]
             password, timestamp = construct_password(bussiness_shortcode)
           
             amount = request.data["Amount"]
             phone_number = '254' + str(self.request.user.phone_number)
-            party_b = bussiness_shortcode 
+            party_b = bussiness_shortcode
             party_a = phone_number
 
-            contribution_obj = dict(
+            contribution_dict = dict(
                 BusinessShortCode=bussiness_shortcode,
                 Password=password,
                 Timestamp=timestamp,
@@ -85,13 +88,42 @@ class MakeContribution(generics.CreateAPIView):
                 AccountReference=ACCOUNTREF,
                 TransactionDesc=TRANSACTIONDESC.format(bussiness_shortcode)
             )
-            res=send_request(contribution_obj)#send request
-            print(contribution_obj)
+            res = send_request(contribution_dict)# send request
+
+            if res['ResponseCode'] == '0':
+                contribution = Contribution.objects.filter(
+                    msisdn=phone_number,
+                    business_shortcode=bussiness_shortcode,
+                    created_at__month=date.today().month
+                    ).first()
+                if not contribution:
+                    contribution_obj = Contribution(
+                        transaction_type=TRANSACTIONTYPE,
+
+                        transaction_id=str(uuid.uuid4()),
+
+                        amount='0.00',
+
+                        business_shortcode=bussiness_shortcode,
+                        account_balance='0.00',
+
+                        msisdn=phone_number,
+
+                        checkout_request_id=res['CheckoutRequestID'],
+                        merchant_request_id=res['MerchantRequestID'],
+                    )
+
+                    contribution_obj.save()
+                else:
+                    contribution.checkout_request_id = res['CheckoutRequestID']
+                    contribution.save()
         
-            return Response({'message':CONTRIBUTION_MESSAGE.format(amount)},status=status.HTTP_200_OK)
+                return Response({'message': CONTRIBUTION_MESSAGE.format(amount)},status=status.HTTP_200_OK)
+            else:
+                return Response({'message': CONTRIBUTION_MESSAGE.format(amount)}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            # log error
-            # print(e)
+            print(res)
+            raise
             return Response({'message':SERVER_ERROR}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 

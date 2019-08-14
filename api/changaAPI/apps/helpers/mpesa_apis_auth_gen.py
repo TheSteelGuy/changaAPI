@@ -30,4 +30,3 @@ def generate_auth():
     except Exception as e:
         #log this error
         raise e
-print(generate_auth())
