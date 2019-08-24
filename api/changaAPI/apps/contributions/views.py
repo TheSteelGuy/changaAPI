@@ -67,7 +67,8 @@ class MakeContribution(generics.CreateAPIView):
 
     def post(self, request, **kwargs):
         try:
-            bussiness_shortcode = '174379' # request.data["BusinessShortCode"]
+            bussiness_shortcode = request.data["BusinessShortCode"]
+
             password, timestamp = construct_password(bussiness_shortcode)
           
             amount = request.data["Amount"]
@@ -88,43 +89,44 @@ class MakeContribution(generics.CreateAPIView):
                 AccountReference=ACCOUNTREF,
                 TransactionDesc=TRANSACTIONDESC.format(bussiness_shortcode)
             )
-            res = send_request(contribution_dict)# send request
 
-            if res['ResponseCode'] == '0':
-                contribution = Contribution.objects.filter(
+            res = send_request(contribution_dict)# send request
+            try:
+                if res['ResponseCode'] == '0':
+                    contribution = Contribution.objects.filter(
                     msisdn=phone_number,
                     business_shortcode=bussiness_shortcode,
                     created_at__month=date.today().month
                     ).first()
-                if not contribution:
-                    contribution_obj = Contribution(
-                        transaction_type=TRANSACTIONTYPE,
+                    if not contribution:
+                        contribution_obj = Contribution(
+                            transaction_type=TRANSACTIONTYPE,
 
-                        transaction_id=str(uuid.uuid4()),
+                            transaction_id=str(uuid.uuid4()),
 
-                        amount='0.00',
+                            amount='0.00',
 
-                        business_shortcode=bussiness_shortcode,
-                        account_balance='0.00',
+                            business_shortcode=bussiness_shortcode,
+                            account_balance='0.00',
 
-                        msisdn=phone_number,
+                            msisdn=phone_number,
 
-                        checkout_request_id=res['CheckoutRequestID'],
-                        merchant_request_id=res['MerchantRequestID'],
-                    )
+                            checkout_request_id=res['CheckoutRequestID'],
+                            merchant_request_id=res['MerchantRequestID'],
+                        )
 
-                    contribution_obj.save()
-                else:
-                    contribution.checkout_request_id = res['CheckoutRequestID']
-                    contribution.save()
-        
-                return Response({'message': CONTRIBUTION_MESSAGE.format(amount)},status=status.HTTP_200_OK)
-            else:
-                return Response({'message': CONTRIBUTION_MESSAGE.format(amount)}, status=status.HTTP_400_BAD_REQUEST)
+                        contribution_obj.save()
+                        return Response({'message': CONTRIBUTION_MESSAGE.format(amount)},status=status.HTTP_200_OK)
+                    else:
+                        contribution.checkout_request_id = res['CheckoutRequestID']
+                        contribution.save() 
+                        return Response({'message': CONTRIBUTION_MESSAGE.format(amount)},status=status.HTTP_200_OK)
+            except KeyError:
+                return Response({'message': 'Another tranascation is still ongoing, complete it first. Thanks'},status=status.HTTP_400_BAD_REQUEST)
+
         except Exception as e:
-            print(res)
-            raise
-            return Response({'message':SERVER_ERROR}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            print(e)
+            return Response({'message': SERVER_ERROR}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 

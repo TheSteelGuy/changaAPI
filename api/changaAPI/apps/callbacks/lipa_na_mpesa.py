@@ -22,6 +22,7 @@ class LipaNaMpesaView(generics.CreateAPIView):
         print('....................................................................≥≥...................')
 
         data = request.data.get('Body')
+        print(data)
 
         # get the contribution to update
         contribution = Contribution.objects.filter(checkout_request_id=data['stkCallback']['CheckoutRequestID']).first()
