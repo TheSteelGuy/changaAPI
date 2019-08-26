@@ -5,7 +5,6 @@ from rest_framework.response import Response
 import uuid
 from datetime import date
 
-
 from .serializers import ContributionSerializer
 from .models import Contribution
 from ..authentication.models import User
@@ -17,6 +16,7 @@ from ..constants.views import (
     SERVER_ERROR
     )
 from ..helpers.contribution_request import send_request
+from decimal import Decimal
 
 
 class UserContributionByAccountNumberView(generics.ListAPIView):
@@ -104,8 +104,6 @@ class MakeContribution(generics.CreateAPIView):
 
                             transaction_id=str(uuid.uuid4()),
 
-                            amount='0.00',
-
                             business_shortcode=bussiness_shortcode,
                             account_balance='0.00',
 
@@ -113,6 +111,9 @@ class MakeContribution(generics.CreateAPIView):
 
                             checkout_request_id=res['CheckoutRequestID'],
                             merchant_request_id=res['MerchantRequestID'],
+                            last_amount=Decimal(amount),
+                            password=password,
+                            timestamp=timestamp
                         )
 
                         contribution_obj.save()
@@ -125,7 +126,7 @@ class MakeContribution(generics.CreateAPIView):
                 return Response({'message': 'Another tranascation is still ongoing, complete it first. Thanks'},status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
-            print(e)
+            raise e
             return Response({'message': SERVER_ERROR}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
