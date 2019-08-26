@@ -48,6 +48,8 @@ class LipaNaMpesaView(generics.CreateAPIView):
             contribution.amount += Decimal(str(callback_meta[0].get('Value')))
 
             contribution.required_amount = chamaa_obj.required_amount
+            contribution.last_amount = 0.0
+            contribution.result_code = 0
 
             user = User.objects.filter(phone_number__contains=phone_number).first()
 

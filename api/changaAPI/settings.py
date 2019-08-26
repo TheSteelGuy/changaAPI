@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 import datetime
+from celery.schedules import crontab
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -172,8 +173,10 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
-
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Africa/Nairobi'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
@@ -181,5 +184,7 @@ USE_TZ = True
 # STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 # docker-compose run api ./manage.py  collectstatic
 
+
+# Other Celery settings
 
 STATIC_URL = '/static/'
