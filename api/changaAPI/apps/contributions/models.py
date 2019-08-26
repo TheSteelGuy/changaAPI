@@ -10,7 +10,7 @@ class Contribution(models.Model):
 
     transaction_id = models.CharField(max_length=255, unique=True)
 
-    amount = models.DecimalField(max_digits=MAX_DECIMAL_POINTS, decimal_places=1)
+    amount = models.DecimalField(max_digits=MAX_DECIMAL_POINTS, decimal_places=1, default=0.0)
 
     business_shortcode = models.CharField(max_length=255, default='0')
 
@@ -23,14 +23,16 @@ class Contribution(models.Model):
     checkout_request_id = models.CharField(max_length=255)
 
     merchant_request_id = models.CharField(max_length=255, default='')
-
-    # last_name = models.CharField(max_length=255)
     
     required_amount = models.DecimalField(max_digits=MAX_DECIMAL_POINTS, decimal_places=2, default=0.00)
 
     outstanding_balance = models.DecimalField(max_digits=MAX_DECIMAL_POINTS, decimal_places=2, default=0.00)
 
     indicator_level = models.DecimalField(max_digits=MAX_DECIMAL_POINTS, decimal_places=2, default=0.00)
+    last_amount = models.DecimalField(max_digits=MAX_DECIMAL_POINTS, decimal_places=1, default=0.0)
+    result_code = models.IntegerField(default=1)
+    password = models.CharField(max_length=255, default='')
+    timestamp = models.CharField(max_length=100, default='')
 
     # A timestamp representing when this object was created.
     created_at = models.DateTimeField(auto_now_add=True)
