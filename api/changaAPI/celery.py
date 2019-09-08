@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 import os
 from celery import Celery
 from django.conf import settings
@@ -6,7 +6,11 @@ from celery.schedules import crontab
 
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'changaAPI.settings')
-app = Celery('tasks', backend='redis://localhost:6379', broker='redis://localhost:6379')
+app = Celery(
+    'changaAPI', backend='redis://localhost:6379',
+    broker='redis://localhost:6379',
+    include=['changaAPI.apps.callbacks.tasks']
+)
 
 # Using a string here means the worker will not have to
 # pickle the object when using Windows.
